@@ -8,16 +8,13 @@
 
 import SpriteKit
 
-enum ContactCategory: UInt32 {
-  case Wall = 1
-  case LittleCircle = 2
-}
-
 enum Wall: String {
   case Top = "Top"
   case Left = "Left"
   case Right = "Right"
   case Bottom = "Bottom"
+  
+  static let allValues = [Top, Left, Right, Bottom]
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -25,82 +22,60 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   var gameView: SKView!
   
   override func didMoveToView(view: SKView) {
-    /* Setup your scene here */
-    
     gameView = view
     
     backgroundColor = UIColor.blackColor()
     physicsWorld.gravity = CGVector(dx: 0, dy: 0)
     physicsWorld.contactDelegate = self
-    
-    addSquareToView(view, withVelocity: CGVector(dx: 300, dy: 100), atPosition: CGPoint(x: 200, y: 100))
-    addSquareToView(view, withVelocity: CGVector(dx: 150, dy: -10), atPosition: CGPoint(x: 100, y: 300))
-    addSquareToView(view, withVelocity: CGVector(dx: 200, dy: 150), atPosition: CGPoint(x: 200, y: 150))
-    
-    var bottomBorderBody = SKPhysicsBody(edgeFromPoint: view.frame.origin, toPoint: CGPoint(x: view.frame.width, y: view.frame.origin.y))
-    bottomBorderBody.friction = 0
-    bottomBorderBody.restitution = 1
-    bottomBorderBody.usesPreciseCollisionDetection = true
-    bottomBorderBody.categoryBitMask = ContactCategory.Wall.rawValue
-    bottomBorderBody.contactTestBitMask = ContactCategory.LittleCircle.rawValue
-    bottomBorderBody.collisionBitMask = ContactCategory.Wall.rawValue
-    var bottomBorder = SKNode()
-    bottomBorder.name = Wall.Bottom.rawValue
-    bottomBorder.physicsBody = bottomBorderBody
-    
-    var leftBorderBody = SKPhysicsBody(edgeFromPoint: view.frame.origin, toPoint: CGPoint(x: view.frame.origin.x, y: view.frame.height))
-    leftBorderBody.friction = 0
-    leftBorderBody.usesPreciseCollisionDetection = true
-    leftBorderBody.categoryBitMask = ContactCategory.Wall.rawValue
-    leftBorderBody.contactTestBitMask = ContactCategory.LittleCircle.rawValue
-    leftBorderBody.collisionBitMask = ContactCategory.Wall.rawValue
-    var leftBorder = SKNode()
-    leftBorder.name = Wall.Left.rawValue
-    leftBorder.physicsBody = leftBorderBody
-    
-    var rightBorderBody = SKPhysicsBody(edgeFromPoint: CGPoint(x: view.frame.width, y: view.frame.origin.y), toPoint: CGPoint(x: view.frame.width, y: view.frame.height))
-    rightBorderBody.friction = 0;
-    rightBorderBody.usesPreciseCollisionDetection = true
-    rightBorderBody.categoryBitMask = ContactCategory.Wall.rawValue
-    rightBorderBody.contactTestBitMask = ContactCategory.LittleCircle.rawValue
-    rightBorderBody.collisionBitMask = ContactCategory.Wall.rawValue
-    var rightBorder = SKNode()
-    rightBorder.name = Wall.Right.rawValue
-    rightBorder.physicsBody = rightBorderBody
-    
-    var topBorderBody = SKPhysicsBody(edgeFromPoint: CGPoint(x: view.frame.origin.x, y: view.frame.height), toPoint: CGPoint(x: view.frame.width, y: view.frame.height))
-    topBorderBody.friction = 0;
-    topBorderBody.usesPreciseCollisionDetection = true
-    topBorderBody.categoryBitMask = ContactCategory.Wall.rawValue
-    topBorderBody.contactTestBitMask = ContactCategory.LittleCircle.rawValue
-    topBorderBody.collisionBitMask = ContactCategory.Wall.rawValue
-    var topBorder = SKNode()
-    topBorder.name = Wall.Top.rawValue
-    topBorder.physicsBody = topBorderBody
-    
-    addChild(bottomBorder)
-    addChild(leftBorder)
-    addChild(rightBorder)
-    addChild(topBorder)
+
+    for wall in Wall.allValues {
+      addChild(createSKNodeForWall(wall)!)
+    }
   }
   
-//  func createSKNodeForWall(wall: Wall) -> SKNode? {
-//    var beginPoint: CGPoint?
-//    var endPoint: CGPoint?
-//    
-//    switch(wall) {
-//    case Wall.Bottom:
-//      beginPoint = gameView.frame.origin
-//      endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.origin.y)
-//    case Wall.Left:
-//      beginPoint
-//    }
-//    
-//    return nil
-//  }
-  
-  func addSquareToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
+  func createSKNodeForWall(wall: Wall) -> SKNode? {
+    var beginPoint: CGPoint?
+    var endPoint: CGPoint?
+    var borderName = wall.rawValue
     
+    switch(wall) {
+    case Wall.Bottom:
+      beginPoint = gameView.frame.origin
+      endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.origin.y)
+    case Wall.Left:
+      beginPoint = gameView.frame.origin
+      endPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
+    case Wall.Right:
+      beginPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.origin.y)
+      endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
+    case Wall.Top:
+      beginPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
+      endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
+    }
+    
+    if let beginPoint = beginPoint {
+      if let endPoint = endPoint {
+        var physicsBody = SKPhysicsBody(edgeFromPoint: beginPoint, toPoint: endPoint)
+        physicsBody.categoryBitMask = 1
+        physicsBody.contactTestBitMask = 2
+        physicsBody.collisionBitMask = 1
+        physicsBody.friction = 0
+        
+        var border = SKNode()
+        border.name = borderName
+        border.physicsBody = physicsBody
+        
+        return border
+      } else {
+          return nil
+      }
+    } else {
+      return nil
+    }
+  }
+  
+  // TODO: erase this thing, subclass SKSpriteNode for circle or something
+  func addSquareToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
     var circleSize = 5.0;
     
     var drawingView = UIView(frame: CGRect(x: 0, y: 0, width: circleSize, height: circleSize))
@@ -177,7 +152,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Called when a touch begins */
     
     for touch: AnyObject in touches {
-      
+      addSquareToView(gameView, withVelocity: CGVector(dx: 100, dy: 300), atPosition: gameView.center)
     }
   }
 }
