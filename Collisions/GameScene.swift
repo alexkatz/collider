@@ -75,46 +75,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   }
   
   // TODO: erase this thing, subclass SKSpriteNode for circle or something
-  func addSquareToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
-    var circleSize = 5.0;
-    
-    var drawingView = UIView(frame: CGRect(x: 0, y: 0, width: circleSize, height: circleSize))
-    drawingView.backgroundColor = UIColor.clearColor()
-    
-    var circleLayer = CALayer()
-    circleLayer.frame = CGRect(x: 0, y: 0, width: circleSize, height: circleSize)
-    circleLayer.backgroundColor = UIColor.whiteColor().CGColor
-    circleLayer.opaque = false
-    circleLayer.cornerRadius = CGFloat(circleSize / 2)
-    circleLayer.masksToBounds = true
-    
-    drawingView.layer.addSublayer(circleLayer)
-    
-    UIGraphicsBeginImageContextWithOptions(CGSize(width: circleSize, height: circleSize), false, UIScreen.mainScreen().scale)
-    CGContextSetFillColorWithColor(UIGraphicsGetCurrentContext(), UIColor.clearColor().CGColor)
-    CGContextFillRect(UIGraphicsGetCurrentContext(), CGRect(x: 0, y: 0, width: circleSize, height: circleSize))
-    drawingView.layer.renderInContext(UIGraphicsGetCurrentContext())
-    
-    var layerImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    var circle = SKSpriteNode(texture: SKTexture(image: layerImage))
-    
-    circle.name = "Circle"
+  func addCircleToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
+    var circle = Circle(radius: 5, color: UIColor.whiteColor())
+    circle.physicsBody!.velocity = velocity
     circle.position = position
-    addChild(circle)
-    circle.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(circleSize / 2))
     
-    if let physicsBody = circle.physicsBody {
-      physicsBody.friction = 0
-      physicsBody.restitution = 1
-      physicsBody.linearDamping = 0
-      physicsBody.allowsRotation = false
-      physicsBody.categoryBitMask = 1
-      physicsBody.contactTestBitMask = 1
-      physicsBody.collisionBitMask = 2
-      physicsBody.velocity = velocity
-    }
+    addChild(circle)
   }
   
   func didBeginContact(contact: SKPhysicsContact) {
@@ -152,7 +118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Called when a touch begins */
     
     for touch: AnyObject in touches {
-      addSquareToView(gameView, withVelocity: CGVector(dx: 100, dy: 300), atPosition: gameView.center)
+      addCircleToView(gameView, withVelocity: CGVector(dx: 100, dy: 300), atPosition: gameView.center)
     }
   }
 }

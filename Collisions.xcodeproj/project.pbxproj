@@ -15,6 +15,7 @@
 		3B87DD111AACA476001933BE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD101AACA476001933BE /* Images.xcassets */; };
 		3B87DD141AACA476001933BE /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD121AACA476001933BE /* LaunchScreen.xib */; };
 		3B87DD201AACA476001933BE /* CollisionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87DD1F1AACA476001933BE /* CollisionsTests.swift */; };
+		3B9A20FD1AB287B300C6D3F9 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9A20FC1AB287B300C6D3F9 /* Circle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		3B87DD191AACA476001933BE /* CollisionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CollisionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B87DD1E1AACA476001933BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B87DD1F1AACA476001933BE /* CollisionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionsTests.swift; sourceTree = "<group>"; };
+		3B9A20FC1AB287B300C6D3F9 /* Circle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Circle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,12 +84,10 @@
 			isa = PBXGroup;
 			children = (
 				3B87DD051AACA476001933BE /* AppDelegate.swift */,
-				3B87DD071AACA476001933BE /* GameScene.sks */,
 				3B87DD091AACA476001933BE /* GameScene.swift */,
 				3B87DD0B1AACA476001933BE /* GameViewController.swift */,
 				3B87DD0D1AACA476001933BE /* Main.storyboard */,
-				3B87DD101AACA476001933BE /* Images.xcassets */,
-				3B87DD121AACA476001933BE /* LaunchScreen.xib */,
+				3B9A20FB1AB287B300C6D3F9 /* SpriteNodes */,
 				3B87DD031AACA476001933BE /* Supporting Files */,
 			);
 			path = Collisions;
@@ -96,6 +96,9 @@
 		3B87DD031AACA476001933BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3B87DD071AACA476001933BE /* GameScene.sks */,
+				3B87DD121AACA476001933BE /* LaunchScreen.xib */,
+				3B87DD101AACA476001933BE /* Images.xcassets */,
 				3B87DD041AACA476001933BE /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -116,6 +119,14 @@
 				3B87DD1E1AACA476001933BE /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3B9A20FB1AB287B300C6D3F9 /* SpriteNodes */ = {
+			isa = PBXGroup;
+			children = (
+				3B9A20FC1AB287B300C6D3F9 /* Circle.swift */,
+			);
+			path = SpriteNodes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B9A20FD1AB287B300C6D3F9 /* Circle.swift in Sources */,
 				3B87DD0A1AACA476001933BE /* GameScene.swift in Sources */,
 				3B87DD0C1AACA476001933BE /* GameViewController.swift in Sources */,
 				3B87DD061AACA476001933BE /* AppDelegate.swift in Sources */,
@@ -415,6 +427,7 @@
 				3B87DD251AACA476001933BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3B87DD261AACA476001933BE /* Build configuration list for PBXNativeTarget "CollisionsTests" */ = {
 			isa = XCConfigurationList;
@@ -423,6 +436,7 @@
 				3B87DD281AACA476001933BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
