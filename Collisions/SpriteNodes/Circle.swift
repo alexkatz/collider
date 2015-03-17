@@ -8,13 +8,16 @@
 
 import SpriteKit
 
-
 class Circle: SKSpriteNode {
+  
+  var radius: CGFloat!
+  
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
   }
   
   init(radius: CGFloat, color: UIColor) {
+    self.radius = radius
     var drawingView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2))
     drawingView.backgroundColor = UIColor.clearColor()
     
@@ -42,11 +45,6 @@ class Circle: SKSpriteNode {
     physicsBody.restitution = 1
     physicsBody.linearDamping = 0
     physicsBody.allowsRotation = false
-    
-    // TODO: move this bitmask stuff elsewhere?
-    physicsBody.categoryBitMask = 1
-    physicsBody.contactTestBitMask = 1
-    physicsBody.collisionBitMask = 2
     
     self.physicsBody = physicsBody
   }
