@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-enum Wall: String {
+enum Boundary: String {
   case Top = "Top"
   case Left = "Left"
   case Right = "Right"
@@ -20,6 +20,13 @@ enum Wall: String {
 enum CircleType: String {
   case Big = "Big"
   case Little = "Little"
+}
+
+enum Category: UInt32 {
+  case Obstacle = 1
+  case Player = 2
+  case Gem = 4
+  case Boundary = 8
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -36,50 +43,50 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     physicsWorld.gravity = CGVector(dx: 0, dy: 0)
     physicsWorld.contactDelegate = self
     
-    for wall in Wall.allValues {
-      addChild(createWallFromWallType(wall)!)
+    for boundary in Boundary.allValues {
+      addChild(createBoundaryFromBoundaryType(boundary)!)
     }
     
     createBigCircle()
-    addCircleToView(gameView, withVelocity: CGVector(dx: 200, dy: 400), atPosition: CGPoint(x: 300, y: 400))
+    addCircleToView(gameView, withVelocity: CGVector(dx: 20, dy: 40), atPosition: CGPoint(x: 300, y: 400))
   }
   
-  func createWallFromWallType(wall: Wall) -> SKNode? {
+  func createBoundaryFromBoundaryType(boundary: Boundary) -> SKNode? {
     var beginPoint: CGPoint?
     var endPoint: CGPoint?
     
-    let borderName = wall.rawValue
-    let wallView = UIView()
-    wallView.backgroundColor = UIColor.whiteColor()
+    let borderName = boundary.rawValue
+    let boundaryView = UIView()
+    boundaryView.backgroundColor = UIColor.whiteColor()
     
-    switch(wall) {
-    case Wall.Bottom:
+    switch(boundary) {
+    case Boundary.Bottom:
       beginPoint = CGPoint(x: gameView.frame.origin.x, y: bottomAreaHeight)
       endPoint = CGPoint(x: gameView.frame.width, y: bottomAreaHeight)
-      wallView.frame = CGRect(origin: CGPoint(x: 0, y: gameView.frame.height - bottomAreaHeight), size: CGSize(width: gameView.frame.width, height: 0.5))
-    case Wall.Left:
+      boundaryView.frame = CGRect(origin: CGPoint(x: 0, y: gameView.frame.height - bottomAreaHeight), size: CGSize(width: gameView.frame.width, height: 0.5))
+    case Boundary.Left:
       beginPoint = gameView.frame.origin
       endPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
-      wallView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
-    case Wall.Right:
+      boundaryView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
+    case Boundary.Right:
       beginPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.origin.y)
       endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
-      wallView.frame = CGRect(origin: CGPoint(x: gameView.frame.width - 0.5, y: 0), size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
-    case Wall.Top:
+      boundaryView.frame = CGRect(origin: CGPoint(x: gameView.frame.width - 0.5, y: 0), size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
+    case Boundary.Top:
       beginPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
       endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
-      wallView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: gameView.frame.width, height: 0.5))
+      boundaryView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: gameView.frame.width, height: 0.5))
     }
     
-    gameView.addSubview(wallView)
+    gameView.addSubview(boundaryView)
     
     if let beginPoint = beginPoint {
       if let endPoint = endPoint {
         var physicsBody = SKPhysicsBody(edgeFromPoint: beginPoint, toPoint: endPoint)
-        physicsBody.categoryBitMask = 1
-        physicsBody.contactTestBitMask = 2
-        physicsBody.collisionBitMask = 1
+        physicsBody.categoryBitMask = Category.Boundary.rawValue
+        physicsBody.collisionBitMask = 0
         physicsBody.friction = 0
+        physicsBody.dynamic = false
         
         var border = SKNode()
         border.name = borderName
@@ -94,14 +101,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
   }
   
-  // TODO: erase this thing, subclass SKSpriteNode for circle or something
   func addCircleToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
     var circle = Circle(radius: 5, color: UIColor.whiteColor())
     
     if let physicsBody = circle.physicsBody {
-      physicsBody.categoryBitMask = 1
-      physicsBody.contactTestBitMask = 1
-      physicsBody.collisionBitMask = 2
+      physicsBody.categoryBitMask = Category.Obstacle.rawValue
+      physicsBody.contactTestBitMask = Category.Boundary.rawValue | Category.Player.rawValue
+      physicsBody.collisionBitMask = 0
       physicsBody.velocity = velocity
     }
     
@@ -112,40 +118,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   }
   
   func didBeginContact(contact: SKPhysicsContact) {
-    var circle: SKPhysicsBody!
-    var wall: SKPhysicsBody!
-    
-    if contact.bodyA.contactTestBitMask < contact.bodyB.contactTestBitMask {
-      circle = contact.bodyA
-      wall = contact.bodyB
-    } else if contact.bodyA.contactTestBitMask > contact.bodyB.contactTestBitMask {
-      circle = contact.bodyB
-      wall = contact.bodyA
-    } else {
+    switch(contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) {
+    case Category.Boundary.rawValue | Category.Obstacle.rawValue:
+      handleObstacleBoundaryCollision(bodyA: contact.bodyA, bodyB: contact.bodyB)
+    case Category.Player.rawValue | Category.Obstacle.rawValue:
+      handleObstaclePlayerCollision(bodyA: contact.bodyA, bodyB: contact.bodyB)
+    default:
       return
     }
+  }
+  
+  func handleObstacleBoundaryCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
+    var obstacle: SKPhysicsBody!
+    var boundary: SKPhysicsBody!
     
-    let wallName = wall.node!.name!
-    var oldVelocity = circle.velocity
+    if bodyA.categoryBitMask > bodyB.categoryBitMask {
+      boundary = bodyA
+      obstacle = bodyB
+    } else {
+      boundary = bodyB
+      obstacle = bodyA
+    }
+    
+    let boundaryName = boundary.node!.name!
+    var oldVelocity = obstacle.velocity
     var updatedVelocity: CGVector?
     
-    if wallName == Wall.Top.rawValue || wallName == Wall.Bottom.rawValue {
+    if boundaryName == Boundary.Top.rawValue || boundaryName == Boundary.Bottom.rawValue {
       updatedVelocity = CGVector(dx: oldVelocity.dx, dy: -oldVelocity.dy)
-    } else if wallName == Wall.Left.rawValue || wallName == Wall.Right.rawValue {
+    } else if boundaryName == Boundary.Left.rawValue || boundaryName == Boundary.Right.rawValue {
       updatedVelocity = CGVector(dx: -oldVelocity.dx, dy: oldVelocity.dy)
     }
     
     if let updatedVelocity = updatedVelocity {
-      circle.velocity = updatedVelocity
+      obstacle.velocity = updatedVelocity
     } else {
-      println("problem updating velocity...")
+      NSException(name:"CollisionException", reason:"Could not calculate updated velocity upon obstacle/boundary collision", userInfo:nil).raise()
     }
+  }
+  
+  func handleObstaclePlayerCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
+    println("GAME OVER LOLOLOLOL")
   }
   
   func createBigCircle() {
     bigCircle = Circle(radius: 20, color: UIColor.whiteColor())
     bigCircle.position = CGPoint(x: CGRectGetMidX(gameView.frame), y: CGRectGetMidY(gameView.frame))
     bigCircle.name = CircleType.Big.rawValue
+
+    bigCircle.physicsBody!.categoryBitMask = Category.Player.rawValue
+    bigCircle.physicsBody!.collisionBitMask = 0
+    
     addChild(bigCircle)
   }
   
