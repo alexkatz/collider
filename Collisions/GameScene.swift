@@ -32,7 +32,7 @@ enum Category: UInt32 {
 class GameScene: SKScene, SKPhysicsContactDelegate {
   
   var gameView: SKView!
-  var bigCircle: Circle!
+  var player: Player!
   
   let bottomAreaHeight = CGFloat(170);
   
@@ -47,11 +47,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       addChild(createBoundaryFromBoundaryType(boundary)!)
     }
     
-    createBigCircle()
-    addCircleToView(gameView, withVelocity: CGVector(dx: 20, dy: 40), atPosition: CGPoint(x: 300, y: 400))
+    player = Player(x: CGRectGetMidX(gameView.frame), y: CGRectGetMidY(gameView.frame))
+    addChild(player)
+    
+    addCircleToView(gameView, withVelocity: CGVector(dx: 20, dy: 400), atPosition: CGPoint(x: 300, y: 400))
+    addCircleToView(gameView, withVelocity: CGVector(dx: 300, dy: 20), atPosition: CGPoint(x: 300, y: 400))
   }
   
   func createBoundaryFromBoundaryType(boundary: Boundary) -> SKNode? {
+
     var beginPoint: CGPoint?
     var endPoint: CGPoint?
     
@@ -161,21 +165,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     println("GAME OVER LOLOLOLOL")
   }
   
-  func createBigCircle() {
-    bigCircle = Circle(radius: 20, color: UIColor.whiteColor())
-    bigCircle.position = CGPoint(x: CGRectGetMidX(gameView.frame), y: CGRectGetMidY(gameView.frame))
-    bigCircle.name = CircleType.Big.rawValue
-
-    bigCircle.physicsBody!.categoryBitMask = Category.Player.rawValue
-    bigCircle.physicsBody!.collisionBitMask = 0
-    
-    addChild(bigCircle)
-  }
-  
   var lastTouchLocation: CGPoint!
   var lastTouchTimestamp: NSTimeInterval!
-  let baseMovementFactor = CGFloat(1.8)
-  let velocityDampingFactor = CGFloat(0.02)
+  let baseMovementFactor = CGFloat(2)
+  let velocityDampingFactor = CGFloat(0.01)
   
   override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
     var touch = touches.anyObject() as UITouch?
@@ -201,22 +194,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       let horizontalMovementFactor = CGFloat(baseMovementFactor + (horizontalVelocity * velocityDampingFactor))
       let verticalMovementFactor = CGFloat(baseMovementFactor + (verticalVelocity * velocityDampingFactor))
       
-      var newX = bigCircle.position.x + (dx * horizontalMovementFactor)
-      var newY = bigCircle.position.y + (dy * verticalMovementFactor)
+      var newX = player.position.x + (dx * horizontalMovementFactor)
+      var newY = player.position.y + (dy * verticalMovementFactor)
       
-      if newX > self.frame.width - bigCircle.radius {
-        newX = self.frame.width - bigCircle.radius
-      } else if newX < 0 + bigCircle.radius {
-        newX = 0 + bigCircle.radius
+      if newX > self.frame.width - player.radius {
+        newX = self.frame.width - player.radius
+      } else if newX < 0 + player.radius {
+        newX = 0 + player.radius
       }
       
-      if newY > self.frame.height - bigCircle.radius {
-        newY = self.frame.height - bigCircle.radius
-      } else if newY < bottomAreaHeight + bigCircle.radius {
-        newY = bottomAreaHeight + bigCircle.radius
+      if newY > self.frame.height - player.radius {
+        newY = self.frame.height - player.radius
+      } else if newY < bottomAreaHeight + player.radius {
+        newY = bottomAreaHeight + player.radius
       }
       
-      bigCircle.position = CGPoint(x: newX, y: newY)
+      player.position = CGPoint(x: newX, y: newY)
       lastTouchLocation = currentTouchLocation
     }
   }
