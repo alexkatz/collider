@@ -9,19 +9,12 @@
 import SpriteKit
 
 class Circle: SKSpriteNode {
-  
-  var radius: CGFloat!
-  
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
-  
+
   init(radius: CGFloat, color: UIColor) {
-    self.radius = radius
-    var drawingView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2))
+    let drawingView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2))
     drawingView.backgroundColor = UIColor.clearColor()
     
-    var circleLayer = CALayer()
+    let circleLayer = CALayer()
     circleLayer.frame = CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2)
     circleLayer.backgroundColor = color.CGColor
     circleLayer.opaque = false
@@ -35,18 +28,22 @@ class Circle: SKSpriteNode {
     CGContextFillRect(UIGraphicsGetCurrentContext(), CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2))
     drawingView.layer.renderInContext(UIGraphicsGetCurrentContext())
     
-    var layerImage = UIGraphicsGetImageFromCurrentImageContext()
+    let layerImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
     
     super.init(texture: SKTexture(image: layerImage), color: color, size: CGSize(width: radius * 2, height: radius * 2))
     
-    var physicsBody = SKPhysicsBody(circleOfRadius: radius)
+    let physicsBody = SKPhysicsBody(circleOfRadius: radius)
     physicsBody.friction = 0
     physicsBody.restitution = 1
     physicsBody.linearDamping = 0
     physicsBody.allowsRotation = false
     
     self.physicsBody = physicsBody
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
   }
   
 }

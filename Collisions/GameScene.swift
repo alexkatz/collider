@@ -8,6 +8,8 @@
 
 import SpriteKit
 
+
+
 enum Boundary: String {
   case Top = "Top"
   case Left = "Left"
@@ -15,11 +17,6 @@ enum Boundary: String {
   case Bottom = "Bottom"
   
   static let allValues = [Top, Left, Right, Bottom]
-}
-
-enum CircleType: String {
-  case Big = "Big"
-  case Little = "Little"
 }
 
 enum Category: UInt32 {
@@ -32,9 +29,11 @@ enum Category: UInt32 {
 class GameScene: SKScene, SKPhysicsContactDelegate {
   
   var gameView: SKView!
+  var gameRect: CGRect!
   var player: Player!
   
-  let bottomAreaHeight = CGFloat(170);
+  let bottomAreaHeight = CGFloat(220)
+  let maxObstacleSpeed = CGFloat(100)
   
   override func didMoveToView(view: SKView) {
     gameView = view
@@ -43,21 +42,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     physicsWorld.gravity = CGVector(dx: 0, dy: 0)
     physicsWorld.contactDelegate = self
     
+    gameRect = CGRect(origin: gameView.frame.origin, size: CGSize(width: gameView.frame.width, height: gameView.frame.height - bottomAreaHeight))
+    
     for boundary in Boundary.allValues {
       addChild(createBoundaryFromBoundaryType(boundary)!)
     }
     
     player = Player(x: CGRectGetMidX(gameView.frame), y: CGRectGetMidY(gameView.frame))
     addChild(player)
-    
-    addCircleToView(gameView, withVelocity: CGVector(dx: 20, dy: 400), atPosition: CGPoint(x: 300, y: 400))
-    addCircleToView(gameView, withVelocity: CGVector(dx: 300, dy: 20), atPosition: CGPoint(x: 300, y: 400))
   }
   
   func createBoundaryFromBoundaryType(boundary: Boundary) -> SKNode? {
-
-    var beginPoint: CGPoint?
-    var endPoint: CGPoint?
+    
+    let beginPoint: CGPoint?
+    let endPoint: CGPoint?
     
     let borderName = boundary.rawValue
     let boundaryView = UIView()
@@ -84,42 +82,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     gameView.addSubview(boundaryView)
     
-    if let beginPoint = beginPoint {
-      if let endPoint = endPoint {
-        var physicsBody = SKPhysicsBody(edgeFromPoint: beginPoint, toPoint: endPoint)
-        physicsBody.categoryBitMask = Category.Boundary.rawValue
-        physicsBody.collisionBitMask = 0
-        physicsBody.friction = 0
-        physicsBody.dynamic = false
-        
-        var border = SKNode()
-        border.name = borderName
-        border.physicsBody = physicsBody
-        
-        return border
-      } else {
-        return nil
-      }
+    if let beginPoint = beginPoint, endPoint = endPoint {
+      let physicsBody = SKPhysicsBody(edgeFromPoint: beginPoint, toPoint: endPoint)
+      physicsBody.categoryBitMask = Category.Boundary.rawValue
+      physicsBody.collisionBitMask = 0
+      physicsBody.friction = 0
+      physicsBody.dynamic = false
+      
+      let border = SKNode()
+      border.name = borderName
+      border.physicsBody = physicsBody
+      
+      return border
     } else {
       return nil
     }
   }
-  
-  func addCircleToView(view: UIView, withVelocity velocity: CGVector, atPosition position: CGPoint) {
-    var circle = Circle(radius: 5, color: UIColor.whiteColor())
-    
-    if let physicsBody = circle.physicsBody {
-      physicsBody.categoryBitMask = Category.Obstacle.rawValue
-      physicsBody.contactTestBitMask = Category.Boundary.rawValue | Category.Player.rawValue
-      physicsBody.collisionBitMask = 0
-      physicsBody.velocity = velocity
-    }
-    
-    circle.position = position
-    circle.name = CircleType.Little.rawValue
-    
-    addChild(circle)
-  }
+
+  // MARK: Collision Handling
   
   func didBeginContact(contact: SKPhysicsContact) {
     switch(contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) {
@@ -165,22 +145,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     println("GAME OVER LOLOLOLOL")
   }
   
+  // MARK: Category Placement
+  
+  func randomPositionForRadius(radius: CGFloat) -> CGPoint {
+    var point: CGPoint!
+    
+    do {
+      point = CGPoint(x: randomCGFloatWithMax(gameRect.width - radius), y: randomCGFloatWithMax(gameRect.height - radius))
+    } while (point.x < radius || point.y < radius)
+    
+    point.y += bottomAreaHeight
+    
+    return point
+  }
+  
+  func randomCGFloatWithMax(max: CGFloat) -> CGFloat {
+    return max * CGFloat(arc4random()) / CGFloat(UINT32_MAX)
+  }
+  
+  func randomCGFloatWithRange(#min: CGFloat, max: CGFloat) -> CGFloat {
+    return (randomCGFloatWithMax(1) * (max - min)) + min
+  }
+  
+  // MARK: Touch Handling
+  
   var lastTouchLocation: CGPoint!
   var lastTouchTimestamp: NSTimeInterval!
-  let baseMovementFactor = CGFloat(2)
-  let velocityDampingFactor = CGFloat(0.01)
+  let baseMovementFactor = CGFloat(1.8)
+  let velocityDampingFactor = CGFloat(0.2)
+  let softenPeriod = 2.0
   
-  override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-    var touch = touches.anyObject() as UITouch?
-    if let touch = touch {
+  override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    if let touch = touches.first as? UITouch {
       lastTouchLocation = touch.locationInNode(self)
       lastTouchTimestamp = touch.timestamp
     }
   }
   
-  override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
-    var touch = touches.anyObject() as UITouch?
-    if let touch = touch {
+  override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    if let touch = touches.first as? UITouch {
       let currentTouchLocation = touch.locationInNode(self)
       let currentTouchTimestamp = touch.timestamp
       let time = CGFloat(currentTouchTimestamp - lastTouchTimestamp)
@@ -188,8 +191,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       let dx = currentTouchLocation.x - lastTouchLocation.x
       let dy = currentTouchLocation.y - lastTouchLocation.y
       
-      let horizontalVelocity = CGFloat(abs(dx / time))
-      let verticalVelocity = CGFloat(abs(dy / time))
+      let timeSinceTouchdown = currentTouchTimestamp - lastTouchTimestamp
+      let movementDampingFactor = CGFloat(timeSinceTouchdown < softenPeriod ? timeSinceTouchdown / softenPeriod : 1)
+      
+      let horizontalVelocity = CGFloat(abs(dx / time) * movementDampingFactor)
+      let verticalVelocity = CGFloat(abs(dy / time) * movementDampingFactor)
       
       let horizontalMovementFactor = CGFloat(baseMovementFactor + (horizontalVelocity * velocityDampingFactor))
       let verticalMovementFactor = CGFloat(baseMovementFactor + (verticalVelocity * velocityDampingFactor))
@@ -213,12 +219,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       lastTouchLocation = currentTouchLocation
     }
   }
-  
-  override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
-  }
-  
-  override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-  }
+
 }
 
 

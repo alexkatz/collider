@@ -9,29 +9,30 @@
 import UIKit
 
 class Player: Circle {
+
+  static var Radius = CGFloat(12)
+  static var Color = UIColor.lightGrayColor()
   
-  var playerRadius = CGFloat(20)
-  
-  override var radius: CGFloat! {
-    get {
-      return playerRadius
-    }
-    set {}
+  var radius: CGFloat {
+    return Player.Radius
   }
   
   init() {
-    super.init(radius: playerRadius, color: UIColor.whiteColor())
-    physicsBody!.categoryBitMask = Category.Player.rawValue
-    physicsBody!.collisionBitMask = 0
+    super.init(radius: Player.Radius, color: Player.Color)
+
+    if let physicsBody = physicsBody {
+      physicsBody.categoryBitMask = Category.Player.rawValue
+      physicsBody.collisionBitMask = 0
+    }
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
   }
   
   convenience init(x: CGFloat, y: CGFloat) {
     self.init()
     self.position = CGPoint(x: x, y: y);
-  }
-  
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
   }
   
 }
