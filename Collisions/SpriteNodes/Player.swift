@@ -10,8 +10,8 @@ import UIKit
 
 class Player: Circle {
 
-  static var Radius = CGFloat(12)
-  static var Color = UIColor.lightGrayColor()
+  static let Radius = CGFloat(8)
+  static let Color = UIColor.whiteColor()
   
   var radius: CGFloat {
     return Player.Radius

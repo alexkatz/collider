@@ -10,8 +10,8 @@ import UIKit
 
 class Obstacle: Circle {
   
-  static var Radius = CGFloat(5)
-  static var Color = UIColor.whiteColor()
+  static let Radius = CGFloat(3)
+  static let Color = UIColor.whiteColor()
   
   var radius: CGFloat {
     return Obstacle.Radius
