@@ -33,6 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   var player: Player!
   
   var didCaptureGem = false
+  var gameOver = false;
   
   let bottomAreaHeight = CGFloat(220)
   let minObstacleSpeed = CGFloat(0)
@@ -46,6 +47,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     physicsWorld.contactDelegate = self
     
     gameRect = CGRect(origin: gameView.frame.origin, size: CGSize(width: gameView.frame.width, height: gameView.frame.height - bottomAreaHeight))
+    
+    startNewGame()
+  }
+  
+  func startNewGame() {
+    self.removeAllChildren()
+    self.physicsWorld.speed = 1.0
+    gameOver = false
     
     for boundary in Boundary.allValues {
       addChild(createBoundaryFromBoundaryType(boundary)!)
@@ -100,7 +109,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       return nil
     }
   }
-
+  
   // MARK: Collision Handling
   
   func didBeginContact(contact: SKPhysicsContact) {
@@ -163,6 +172,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   func handleObstaclePlayerCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
     println("GAME OVER LOLOLOLOL")
+    self.physicsWorld.speed = 0
+    gameOver = true
   }
   
   // MARK: Category Placement
@@ -216,6 +227,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       lastTouchLocation = touch.locationInNode(self)
       lastTouchTimestamp = touch.timestamp
     }
+    
+    if gameOver {
+      startNewGame()
+    }
   }
   
   override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -251,8 +266,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         newY = bottomAreaHeight + player.radius
       }
       
-      player.position = CGPoint(x: newX, y: newY)
-      lastTouchLocation = currentTouchLocation
+      if !gameOver {
+        player.position = CGPoint(x: newX, y: newY)
+        lastTouchLocation = currentTouchLocation
+      }
     }
   }
   
@@ -265,7 +282,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
       didCaptureGem = false
     }
   }
-
+  
 }
 
 
