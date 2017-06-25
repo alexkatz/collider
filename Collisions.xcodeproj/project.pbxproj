@@ -11,13 +11,12 @@
 		3B0ABE9D1ABF07360011954C /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0ABE9C1ABF07360011954C /* Square.swift */; };
 		3B0ABE9F1ABF15670011954C /* Gem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0ABE9E1ABF15670011954C /* Gem.swift */; };
 		3B1AB2A71ABBBF1000E54DD1 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1AB2A61ABBBF1000E54DD1 /* Player.swift */; };
+		3B3E5D9D1EFFEF750004F768 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3E5D9B1EFFEF750004F768 /* LaunchScreen.xib */; };
 		3B87DD061AACA476001933BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87DD051AACA476001933BE /* AppDelegate.swift */; };
 		3B87DD081AACA476001933BE /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD071AACA476001933BE /* GameScene.sks */; };
 		3B87DD0A1AACA476001933BE /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87DD091AACA476001933BE /* GameScene.swift */; };
 		3B87DD0C1AACA476001933BE /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87DD0B1AACA476001933BE /* GameViewController.swift */; };
-		3B87DD0F1AACA476001933BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD0D1AACA476001933BE /* Main.storyboard */; };
 		3B87DD111AACA476001933BE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD101AACA476001933BE /* Images.xcassets */; };
-		3B87DD141AACA476001933BE /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B87DD121AACA476001933BE /* LaunchScreen.xib */; };
 		3B87DD201AACA476001933BE /* CollisionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87DD1F1AACA476001933BE /* CollisionsTests.swift */; };
 		3B9A20FD1AB287B300C6D3F9 /* Circle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9A20FC1AB287B300C6D3F9 /* Circle.swift */; };
 /* End PBXBuildFile section */
@@ -37,15 +36,14 @@
 		3B0ABE9C1ABF07360011954C /* Square.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
 		3B0ABE9E1ABF15670011954C /* Gem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gem.swift; sourceTree = "<group>"; };
 		3B1AB2A61ABBBF1000E54DD1 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		3B3E5D9C1EFFEF750004F768 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		3B87DD001AACA476001933BE /* Collisions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Collisions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B87DD041AACA476001933BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B87DD051AACA476001933BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B87DD071AACA476001933BE /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		3B87DD091AACA476001933BE /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		3B87DD0B1AACA476001933BE /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
-		3B87DD0E1AACA476001933BE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3B87DD101AACA476001933BE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3B87DD131AACA476001933BE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		3B87DD191AACA476001933BE /* CollisionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CollisionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B87DD1E1AACA476001933BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B87DD1F1AACA476001933BE /* CollisionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionsTests.swift; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 				3B87DD051AACA476001933BE /* AppDelegate.swift */,
 				3B87DD091AACA476001933BE /* GameScene.swift */,
 				3B87DD0B1AACA476001933BE /* GameViewController.swift */,
-				3B87DD0D1AACA476001933BE /* Main.storyboard */,
 				3B9A20FB1AB287B300C6D3F9 /* SpriteNodes */,
 				3B87DD031AACA476001933BE /* Supporting Files */,
 			);
@@ -104,8 +101,8 @@
 		3B87DD031AACA476001933BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3B3E5D9B1EFFEF750004F768 /* LaunchScreen.xib */,
 				3B87DD071AACA476001933BE /* GameScene.sks */,
-				3B87DD121AACA476001933BE /* LaunchScreen.xib */,
 				3B87DD101AACA476001933BE /* Images.xcassets */,
 				3B87DD041AACA476001933BE /* Info.plist */,
 			);
@@ -226,10 +223,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B87DD141AACA476001933BE /* LaunchScreen.xib in Resources */,
 				3B87DD111AACA476001933BE /* Images.xcassets in Resources */,
+				3B3E5D9D1EFFEF750004F768 /* LaunchScreen.xib in Resources */,
 				3B87DD081AACA476001933BE /* GameScene.sks in Resources */,
-				3B87DD0F1AACA476001933BE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,18 +273,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3B87DD0D1AACA476001933BE /* Main.storyboard */ = {
+		3B3E5D9B1EFFEF750004F768 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				3B87DD0E1AACA476001933BE /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		3B87DD121AACA476001933BE /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3B87DD131AACA476001933BE /* Base */,
+				3B3E5D9C1EFFEF750004F768 /* Base */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
@@ -382,6 +370,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Collisions/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -396,6 +385,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Collisions/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
