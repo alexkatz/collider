@@ -20,10 +20,10 @@ enum Boundary: String {
 }
 
 enum Category: UInt32 {
-  case Obstacle = 1
-  case Player = 2
-  case Gem = 4
-  case Boundary = 8
+  case obstacle = 1
+  case player = 2
+  case gem = 4
+  case boundary = 8
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -33,16 +33,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   var player: Player!
   
   var didCaptureGem = false
-  var gameOver = false;
+  var gameOver = false
   
   let bottomAreaHeight = CGFloat(220)
   let minObstacleSpeed = CGFloat(0)
-  let maxObstacleSpeed = CGFloat(50 )
+  let maxObstacleSpeed = CGFloat(50)
   
-  override func didMoveToView(view: SKView) {
+  override func didMove(to view: SKView) {
     gameView = view
     
-    backgroundColor = UIColor.blackColor()
+    backgroundColor = UIColor.black
     physicsWorld.gravity = CGVector(dx: 0, dy: 0)
     physicsWorld.contactDelegate = self
     
@@ -52,8 +52,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   }
   
   func startNewGame() {
-    self.removeAllChildren()
-    self.physicsWorld.speed = 1.0
+    removeAllChildren()
+    physicsWorld.speed = 1.0
     gameOver = false
     
     for boundary in Boundary.allValues {
@@ -64,13 +64,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     addGem()
   }
   
-  func createBoundaryFromBoundaryType(boundary: Boundary) -> SKNode? {
+  func createBoundaryFromBoundaryType(_ boundary: Boundary) -> SKNode? {
     let beginPoint: CGPoint?
     let endPoint: CGPoint?
     let borderName = boundary.rawValue
     let boundaryView = UIView()
     
-    boundaryView.backgroundColor = UIColor.whiteColor()
+    boundaryView.backgroundColor = UIColor.white
     
     switch(boundary) {
     case Boundary.Bottom:
@@ -80,7 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     case Boundary.Left:
       beginPoint = gameView.frame.origin
       endPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
-      boundaryView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
+      boundaryView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: 0.5, height: gameView.frame.height - bottomAreaHeight))
     case Boundary.Right:
       beginPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.origin.y)
       endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
@@ -88,17 +88,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     case Boundary.Top:
       beginPoint = CGPoint(x: gameView.frame.origin.x, y: gameView.frame.height)
       endPoint = CGPoint(x: gameView.frame.width, y: gameView.frame.height)
-      boundaryView.frame = CGRect(origin: CGPoint.zeroPoint, size: CGSize(width: gameView.frame.width, height: 0.5))
+      boundaryView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: gameView.frame.width, height: 0.5))
     }
     
     gameView.addSubview(boundaryView)
     
-    if let beginPoint = beginPoint, endPoint = endPoint {
-      let physicsBody = SKPhysicsBody(edgeFromPoint: beginPoint, toPoint: endPoint)
-      physicsBody.categoryBitMask = Category.Boundary.rawValue
+    if let beginPoint = beginPoint, let endPoint = endPoint {
+      let physicsBody = SKPhysicsBody(edgeFrom: beginPoint, to: endPoint)
+      physicsBody.categoryBitMask = Category.boundary.rawValue
       physicsBody.collisionBitMask = 0
       physicsBody.friction = 0
-      physicsBody.dynamic = false
+      physicsBody.isDynamic = false
       
       let border = SKNode()
       border.name = borderName
@@ -112,20 +112,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   // MARK: Collision Handling
   
-  func didBeginContact(contact: SKPhysicsContact) {
+  func didBegin(_ contact: SKPhysicsContact) {
     switch(contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask) {
-    case Category.Boundary.rawValue | Category.Obstacle.rawValue:
+    case Category.boundary.rawValue | Category.obstacle.rawValue:
       handleObstacleBoundaryCollision(bodyA: contact.bodyA, bodyB: contact.bodyB)
-    case Category.Player.rawValue | Category.Obstacle.rawValue:
+    case Category.player.rawValue | Category.obstacle.rawValue:
       handleObstaclePlayerCollision(bodyA: contact.bodyA, bodyB: contact.bodyB)
-    case Category.Player.rawValue | Category.Gem.rawValue:
+    case Category.player.rawValue | Category.gem.rawValue:
       handlePlayerGemCollision(bodyA: contact.bodyA, bodyB: contact.bodyB)
     default:
       return
     }
   }
   
-  func handlePlayerGemCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
+  func handlePlayerGemCollision(bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
     let player: SKPhysicsBody
     let gem: SKPhysicsBody
     
@@ -141,7 +141,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     didCaptureGem = true
   }
   
-  func handleObstacleBoundaryCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
+  func handleObstacleBoundaryCollision(bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
     let obstacle: SKPhysicsBody
     let boundary: SKPhysicsBody
     
@@ -154,7 +154,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     let boundaryName = boundary.node!.name!
-    var oldVelocity = obstacle.velocity
+    let oldVelocity = obstacle.velocity
     var updatedVelocity: CGVector?
     
     if boundaryName == Boundary.Top.rawValue || boundaryName == Boundary.Bottom.rawValue {
@@ -166,22 +166,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     if let updatedVelocity = updatedVelocity {
       obstacle.velocity = updatedVelocity
     } else {
-      NSException(name:"CollisionException", reason:"Could not calculate updated velocity upon obstacle/boundary collision", userInfo:nil).raise()
+      NSException(name:NSExceptionName(rawValue: "CollisionException"), reason:"Could not calculate updated velocity upon obstacle/boundary collision", userInfo:nil).raise()
     }
   }
   
-  func handleObstaclePlayerCollision(#bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
-    println("GAME OVER LOLOLOLOL")
+  func handleObstaclePlayerCollision(bodyA: SKPhysicsBody, bodyB: SKPhysicsBody) {
+    print("GAME OVER LOLOLOLOL")
     self.physicsWorld.speed = 0
     gameOver = true
   }
   
   // MARK: Category Placement
   
-  func randomPositionForRadius(radius: CGFloat) -> CGPoint {
+  func randomPositionForRadius(_ radius: CGFloat) -> CGPoint {
     var point: CGPoint!
     
-    do {
+    repeat {
       point = CGPoint(x: randomCGFloatWithMax(gameRect.width - radius), y: randomCGFloatWithMax(gameRect.height - radius))
     } while (point.x < radius || point.y < radius)
     
@@ -190,41 +190,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     return point
   }
   
-  func randomCGFloatWithMax(max: CGFloat) -> CGFloat {
+  func randomCGFloatWithMax(_ max: CGFloat) -> CGFloat {
     return max * CGFloat(arc4random()) / CGFloat(UINT32_MAX)
   }
   
-  func randomCGFloatWithRange(#min: CGFloat, max: CGFloat) -> CGFloat {
+  func randomCGFloatWithRange(min: CGFloat, max: CGFloat) -> CGFloat {
     return (randomCGFloatWithMax(1) * (max - min)) + min
   }
   
   func addGem() {
-    var gem = Gem()
+    let gem = Gem()
     gem.position = randomPositionForRadius(gem.sizeFromCenter)
     addChild(gem)
   }
   
   func addPlayer() {
-    player = Player(x: CGRectGetMidX(gameView.frame), y: CGRectGetMidY(gameView.frame))
+    player = Player(x: gameView.frame.midX, y: gameView.frame.midY)
     addChild(player)
   }
   
   func addObstacle() {
-    let obstacle = Obstacle(position: randomPositionForRadius(Obstacle.Radius), velocity: CGVectorMake(randomCGFloatWithRange(min: minObstacleSpeed, max: maxObstacleSpeed), randomCGFloatWithRange(min: minObstacleSpeed, max: maxObstacleSpeed)))
+    let obstacle = Obstacle(position: randomPositionForRadius(Obstacle.Radius), velocity: CGVector(dx: randomCGFloatWithRange(min: minObstacleSpeed, max: maxObstacleSpeed), dy: randomCGFloatWithRange(min: minObstacleSpeed, max: maxObstacleSpeed)))
     addChild(obstacle)
   }
   
   // MARK: Touch Handling
   
   var lastTouchLocation: CGPoint!
-  var lastTouchTimestamp: NSTimeInterval!
+  var lastTouchTimestamp: TimeInterval!
   let baseMovementFactor = CGFloat(1)
   let velocityDampingFactor = CGFloat(0.0)
   let softenPeriod = 0.0
   
-  override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-    if let touch = touches.first as? UITouch {
-      lastTouchLocation = touch.locationInNode(self)
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      lastTouchLocation = touch.location(in: self)
       lastTouchTimestamp = touch.timestamp
     }
     
@@ -233,9 +233,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
   }
   
-  override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-    if let touch = touches.first as? UITouch {
-      let currentTouchLocation = touch.locationInNode(self)
+  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      let currentTouchLocation = touch.location(in: self)
       let currentTouchTimestamp = touch.timestamp
       let time = CGFloat(currentTouchTimestamp - lastTouchTimestamp)
       
@@ -275,7 +275,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   // MARK: update
   
-  override func update(currentTime: NSTimeInterval) {
+  override func update(_ currentTime: TimeInterval) {
     if didCaptureGem {
       addGem()
       addObstacle()

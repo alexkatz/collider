@@ -11,7 +11,7 @@ import UIKit
 class Obstacle: Circle {
   
   static let Radius = CGFloat(3)
-  static let Color = UIColor.whiteColor()
+  static let Color = UIColor.white
   
   var radius: CGFloat {
     return Obstacle.Radius
@@ -21,8 +21,8 @@ class Obstacle: Circle {
     super.init(radius: Obstacle.Radius, color: Obstacle.Color)
 
     if let physicsBody = physicsBody {
-      physicsBody.categoryBitMask = Category.Obstacle.rawValue
-      physicsBody.contactTestBitMask = Category.Boundary.rawValue | Category.Player.rawValue
+      physicsBody.categoryBitMask = Category.obstacle.rawValue
+      physicsBody.contactTestBitMask = Category.boundary.rawValue | Category.player.rawValue
       physicsBody.collisionBitMask = 0
     }
   }

@@ -11,7 +11,7 @@ import UIKit
 class Gem: Square {
   
   static let SizeFromCenter = CGFloat(20)
-  static let Color = UIColor.whiteColor()
+  static let Color = UIColor.white
   
   var sizeFromCenter: CGFloat {
     return Gem.SizeFromCenter
@@ -21,8 +21,8 @@ class Gem: Square {
     super.init(size: Gem.SizeFromCenter, color: Gem.Color)
     
     if let physicsBody = physicsBody {
-      physicsBody.categoryBitMask = Category.Gem.rawValue
-      physicsBody.contactTestBitMask = Category.Player.rawValue
+      physicsBody.categoryBitMask = Category.gem.rawValue
+      physicsBody.contactTestBitMask = Category.player.rawValue
       physicsBody.collisionBitMask = 0
     }
   }

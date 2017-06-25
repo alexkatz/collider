@@ -10,15 +10,15 @@ import UIKit
 import SpriteKit
 
 extension SKNode {
-  class func unarchiveFromFile(file : NSString) -> SKNode? {
-    if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
-      var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)!
-      var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
+  class func unarchiveFromFile(_ file : NSString) -> SKNode? {
+    if let path = Bundle.main.path(forResource: file as String, ofType: "sks") {
+      let sceneData = try! Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+      let archiver = NSKeyedUnarchiver(forReadingWith: sceneData)
       
       archiver.setClass(classForKeyedUnarchiver(), forClassName: "SKScene")
-      let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
+      let scene = archiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! GameScene
       archiver.finishDecoding()
-      scene.size = UIScreen.mainScreen().bounds.size
+      scene.size = UIScreen.main.bounds.size
       return scene
     } else {
       return nil
@@ -41,21 +41,21 @@ class GameViewController: UIViewController {
       skView.ignoresSiblingOrder = true
       
       /* Set the scale mode to scale to fit the window */
-      scene.scaleMode = .AspectFill
+      scene.scaleMode = .aspectFill
       
       skView.presentScene(scene)
     }
   }
   
-  override func shouldAutorotate() -> Bool {
+  override var shouldAutorotate : Bool {
     return true
   }
   
-  override func supportedInterfaceOrientations() -> Int {
-    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-      return Int(UIInterfaceOrientationMask.AllButUpsideDown.rawValue)
+  override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+    if UIDevice.current.userInterfaceIdiom == .phone {
+      return UIInterfaceOrientationMask.allButUpsideDown
     } else {
-      return Int(UIInterfaceOrientationMask.All.rawValue)
+      return UIInterfaceOrientationMask.all
     }
   }
   
@@ -64,7 +64,7 @@ class GameViewController: UIViewController {
     // Release any cached data, images, etc that aren't in use.
   }
   
-  override func prefersStatusBarHidden() -> Bool {
+  override var prefersStatusBarHidden : Bool {
     return true
   }
 }
